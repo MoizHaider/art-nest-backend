@@ -17,7 +17,6 @@ const dotenv = require("dotenv");
 const mongoObj = require("./database");
 const socketio = require("socket.io");
 
-
 const app = express();
 
 dotenv.config();
@@ -79,7 +78,6 @@ app.post(
 //   res.json("hello everynian");
 // })
 
-
 app.use(
   "/graphql",
   graphqlHTTP({
@@ -125,14 +123,12 @@ app.use((error, req, res, next) => {
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
-let server
+let server;
 const PORT = process.env.PORT || 8080;
-mongoObj.mongoConnect(()=>{
-  server = app.listen(PORT, () => {
-    console.log("listening on port 8080");
-  });
+mongoObj.mongoConnect(() => {});
+server = app.listen(PORT, () => {
+  console.log("listening on port 8080");
 });
-
 
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
@@ -156,7 +152,5 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
   });
 });
-
-
 
 module.exports = app;
