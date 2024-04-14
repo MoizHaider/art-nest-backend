@@ -75,9 +75,9 @@ app.post(
   userController.addUserDetails
 );
 
-app.use("/", (req, res, next)=>{
-  res.json("hello everynian");
-})
+// app.use("/", (req, res, next)=>{
+//   res.json("hello everynian");
+// })
 
 
 app.use(
