@@ -1,0 +1,2 @@
+DATABASE_URL=mongodb+srv://MoizHiader:moiz15121472@cluster0.w6loomf.mongodb.net/?retryWrites=true&w=majority
+SECRET_KEY=somesecretstring
