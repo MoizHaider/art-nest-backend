@@ -1,0 +1,7 @@
+#ignore all nodemodules
+node_modules
+*.psd
+*.fig
+*.docx
+*.env.local
+Additional-Files
