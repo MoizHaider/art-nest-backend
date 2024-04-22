@@ -19,7 +19,6 @@ const dotenv = require("dotenv");
 const mongoObj = require("./database");
 const socketio = require("socket.io");
 
-
 const app = express();
 
 dotenv.config();
