@@ -7,12 +7,14 @@ const userController = require("../controllers/user");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 
+const serverless = require("serverless-http");
+
 const ObjectId = require("mongodb").ObjectId;
 const auth = require("../middleware/auth");
 var cors = require("cors");
 const { setDate, getDate } = require("../Utils/Date");
 
-const { dbConnect}  = require("../database");
+const { dbConnect } = require("../database");
 
 const Fuse = require("fuse.js");
 const dotenv = require("dotenv");
@@ -76,7 +78,6 @@ app.post(
   userController.addUserDetails
 );
 
-
 app.use(
   "/graphql",
   graphqlHTTP({
@@ -122,15 +123,13 @@ app.use((error, req, res, next) => {
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
-let server
+let server;
 const PORT = process.env.PORT || 8080;
 
-mongoObj.mongoConnect(()=>{
-  server = app.listen(PORT, () => {
-    console.log("listening on port 8080");
-  });
-});
+mongoObj.mongoConnect(() => {});
 
+app.use("/.netlify/functions/api", router);
+module.exports.handler = serverless(app);
 
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
@@ -154,7 +153,5 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
   });
 });
-
-
 
 module.exports = app;
