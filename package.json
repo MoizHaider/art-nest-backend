@@ -2,12 +2,17 @@
   "name": "art-showcase-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "functions/api.js",
+  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "build": "netlify deploy --prod"
+    "start": "nodemon index.js",
+    "build": "netlify-lambda build express"
   },
+  "keywords": [
+    "netlify",
+    "express.js"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
