@@ -1,3 +1,4 @@
+'use strict';
 const express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 const graphqlSchema = require("../graphql/schemas");
@@ -126,7 +127,7 @@ app.use((error, req, res, next) => {
 let server;
 const PORT = process.env.PORT || 8080;
 
-mongoObj.mongoConnect(() => {});
+
 
 app.use("/.netlify/functions/api", router);
 module.exports.handler = serverless(app);
