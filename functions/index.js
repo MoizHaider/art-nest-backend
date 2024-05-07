@@ -1,22 +1,22 @@
 const express = require("express");
 var { graphqlHTTP } = require("express-graphql");
-const graphqlSchema = require("./graphql/schemas");
-const graphqlResolver = require("./graphql/resolvers");
+const graphqlSchema = require("../graphql/schemas");
+const graphqlResolver = require("../graphql/resolvers");
 const path = require("path");
-const userController = require("./controllers/user");
+const userController = require("../controllers/user");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 
 const ObjectId = require("mongodb").ObjectId;
-const auth = require("./middleware/auth");
+const auth = require("../middleware/auth");
 var cors = require("cors");
-const { setDate, getDate } = require("./Utils/Date");
+const { setDate, getDate } = require("../Utils/Date");
 
-const { dbConnect}  = require("./database");
+const { dbConnect}  = require("../database");
 
 const Fuse = require("fuse.js");
 const dotenv = require("dotenv");
-const mongoObj = require("./database");
+const mongoObj = require("../database");
 const socketio = require("socket.io");
 
 const app = express();

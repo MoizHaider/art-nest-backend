@@ -1,7 +1,8 @@
 #ignore all nodemodules
-node_modules
+node_modules/
 *.psd
 *.fig
 *.docx
 *.env.local
 Additional-Files
+.netlify
