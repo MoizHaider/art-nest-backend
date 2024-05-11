@@ -118,9 +118,9 @@ router.use((error, req, res, next) => {
 
 
 
-// app.use("/.netlify/functions/", router);
+app.use("/.netlify/functions/", router);
 
-// module.exports.handler = serverless(app);
+module.exports.handler = serverless(app);
 
 
 

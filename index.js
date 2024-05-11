@@ -1,7 +1,7 @@
 "use strict";
 const dotenv = require("dotenv");
 const { dbConnect } = require("./database");
-const app = require("./functions/api");
+const app = require("./netlify/functions/api");
 const mongoObj = require("./database");
 dotenv.config();
 const PORT = process.env.PORT;
