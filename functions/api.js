@@ -7,6 +7,7 @@ const path = require("path");
 const userController = require("../controllers/user");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+const {Router} = require("express")
 
 const serverless = require("serverless-http");
 
@@ -23,7 +24,10 @@ const mongoObj = require("../database");
 const socketio = require("socket.io");
 
 const app = express();
-
+const router = Router()
+router.use(()=>{
+  console.log("2Z")
+})
 dotenv.config();
 
 const fileStorage = multer.diskStorage({
@@ -59,7 +63,7 @@ app.use((req, res, next) => {
 
 app.use(auth);
 
-app.post(
+router.post(
   // could not use multer here as adding (upload.array("postImages", 10)) or any other method wasn't running
   "/add-post", // ruuning the controller function so I did it manually passing the post names in the header from front..
   (req, res, next) => {
@@ -68,9 +72,9 @@ app.post(
   },
   userController.addNewPost
 );
-app.post("/add-post", upload.array("postImages", 10));
+router.post("/add-post", upload.array("postImages", 10));
 
-app.post(
+router.post(
   "/create-user-details",
   upload.fields([
     { name: "profileImg", maxCount: 1 },
@@ -102,57 +106,22 @@ const fuseOptions = {
   //threshold: 0.3,
 };
 
-const performSearch = async (query) => {
-  console.log("search query ", query);
-  let db = await dbConnect();
-  const documents = await db
-    .collection("usersData")
-    .find({})
-    // .find({ "name" : { $regrex: /query/ } })
-    .project({ name: 1, profilePicUrl: 1, title: 1 })
-    .toArray();
 
-  const fuse = new Fuse(documents, fuseOptions);
 
-  return fuse.search(query);
-};
-
-app.use((error, req, res, next) => {
+router.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
-let server;
-const PORT = process.env.PORT || 8080;
 
 
 
-app.use("/.netlify/functions/api", router);
-module.exports.handler = serverless(app);
+// app.use("/.netlify/functions/", router);
 
-const io = require("socket.io")(server, {
-  pingTimeout: 60000,
-  cors: {
-    //FRONTEND LINK
-    origin: "*",
-    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
-  },
-});
+// module.exports.handler = serverless(app);
 
-io.on("connection", (socket) => {
-  console.log("Client connected");
 
-  socket.on("search", async (query) => {
-    const searchResults = await performSearch(query);
-    console.log("results", searchResults);
-    io.emit("searchResults", searchResults);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
 
 module.exports = app;
