@@ -1,31 +1,38 @@
 'use strict';
 const express = require("express");
 var { graphqlHTTP } = require("express-graphql");
-const graphqlSchema = require("../graphql/schemas");
-const graphqlResolver = require("../graphql/resolvers");
+const graphqlSchema = require("../../graphql/schemas");
+const graphqlResolver = require("../../graphql/resolvers");
 const path = require("path");
-const userController = require("../controllers/user");
+const userController = require("../../controllers/user");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const {Router} = require("express")
+const { dbConnect } = require("./database");
+const dotenv = require("dotenv");
 
+const mongoObj = require("./database");
+dotenv.config();
 const serverless = require("serverless-http");
 
 const ObjectId = require("mongodb").ObjectId;
-const auth = require("../middleware/auth");
+const auth = require("../../middleware/auth");
 var cors = require("cors");
-const { setDate, getDate } = require("../Utils/Date");
+const { setDate, getDate } = require("../../Utils/Date");
 
-const { dbConnect } = require("../database");
-
+const { dbConnect } = require("../../database");
 const Fuse = require("fuse.js");
 const dotenv = require("dotenv");
-const mongoObj = require("../database");
+const mongoObj = require("../../database");
 const socketio = require("socket.io");
 
 const app = express();
 const router = Router()
+
+
+
 router.use(()=>{
+  mongoObj.mongoConnect(() => {})
   console.log("2Z")
 })
 dotenv.config();
@@ -116,12 +123,48 @@ router.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-
-
-app.use("/.netlify/functions/", router);
-
 module.exports.handler = serverless(app);
 
 
 
-module.exports = app;
+
+const PORT = process.env.PORT;
+
+
+const io = require("socket.io")(server, {
+  pingTimeout: 60000,
+  cors: {
+    //FRONTEND LINK
+    origin: "*",
+    methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+  },
+});
+
+const performSearch = async (query) => {
+  console.log("search query ", query);
+  let db = await dbConnect();
+  const documents = await db
+    .collection("usersData")
+    .find({})
+    // .find({ "name" : { $regrex: /query/ } })
+    .project({ name: 1, profilePicUrl: 1, title: 1 })
+    .toArray();
+
+  const fuse = new Fuse(documents, fuseOptions);
+
+  return fuse.search(query);
+};
+
+io.on("connection", (socket) => {
+  console.log("Client connected adlfkajsf");
+
+  socket.on("search", async (query) => {
+    const searchResults = await performSearch(query);
+    console.log("results", searchResults);
+    io.emit("searchResults", searchResults);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});

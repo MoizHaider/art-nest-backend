@@ -2,11 +2,11 @@
   "name": "art-showcase-api",
   "version": "1.0.0",
   "description": "",
-  "main": "functions/api.js",
+  "main": "netlify/functions/api.js",
   
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
+    "start": "nodemon api.js",
     "build": "netlify-lambda build express"
   },
   "keywords": [
